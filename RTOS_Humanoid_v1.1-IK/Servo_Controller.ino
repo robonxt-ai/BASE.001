@@ -23,6 +23,8 @@
 // 6/21/2020 18:50 S24 to 1420 (-1000/+1000), S23 to 1500 (-1000/+1000), S22 to 1520 (-1000/+1000)
 // 6/26/2020 23:32 S9 to 1530 (-1000/+1000), S10 to 1480 (-1000/+1000), S11 to 1475 (-1000/+1000), S12 to
 // 6/27/2020 14:32 S12 to 1410
+// 6/28/2020 14:32 S12 to 1500
+
 
 // Store servo status only
 // Id, default pos, min (value), max (value), min (generated), max (generated)
@@ -40,7 +42,7 @@ int servosInfo[][6]
     9,  1530, 1000, 1000, -1, -1,   // L_HIP_PITCH
     10, 1480, 1000, 1000, -1, -1,   // L_KNEE_PITCH
     11, 1475, 1000, 1000, -1, -1,   // L_ANKLE_PITCH
-    12, 1420, 280, 520, -1, -1,     // L_ANKLE_ROLL
+    12, 1500, 280, 520, -1, -1,     // L_ANKLE_ROLL
     13, -1, -1, -1, -1, -1,
     14, -1, -1, -1, -1, -1,
     15, -1, -1, -1, -1, -1,
@@ -310,7 +312,19 @@ int sMoveRelMS(int servo, int pos, int timeToPos)
 int sMoveRelDEG(int servo, float angle, int timeToPos)
 {
     int ok = -1;    // Used for debugging
-    int moveToPos = (angle / .09) + sGetDefaultPos(servo);
+    float moveToPos;
+    //int moveToPos = (angle / .09) + sGetDefaultPos(servo);
+    if (sGetAbsMinPos(servo) > sGetAbsMaxPos(servo))
+    {
+        // ...the result is the min (which is the higher number) minus the ms value of angle (calculated)
+        // The value sent to the servo will be lower than min pos (cause it's bigger than max)
+        moveToPos = sGetDefaultPos(servo) - (angle / .09);
+    }
+    else
+    {
+        // Else we do normal adding to min pos
+        moveToPos = sGetDefaultPos(servo) + (angle / .09);
+    }
     ok = sMoveAbsMS(servo, moveToPos, timeToPos);
     if (DEBUG)  // If debugging is turned on...
     {
@@ -344,7 +358,7 @@ int sMoveAbsDEG(int servo, float angle, int timeToPos)
     if (DEBUG)  // If debugging is turned on...
     {
         // Debug
-        Serial.print(F("sMoveRelDEG - returns: "));
+        Serial.print(F("sMoveAbsDEG - returns: "));
         Serial.println(ok);
     }
     return (ok);    // Returns ok value to the previous function

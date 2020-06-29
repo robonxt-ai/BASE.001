@@ -58,10 +58,6 @@ bool DEBUG = true;
 #define SERVO_BAUDRATE 9600
 #define SERIAL_BAUDRATE 9600
 
-// Define pins for servo and bluetooth serial ports
-#define PIN_SERVO_RX 8          // RX pin for the servo board
-#define PIN_SERVO_TX 9          // TX pin for the servo board
-
 // Define Servo default positions and stuff
 #define FACTORY_DEFAULT_POS 1500    // Range of board is ~500-2500ms, half is 1500ms
 #define SERVO_ID 0                  // Self-explanatory
@@ -105,28 +101,40 @@ void setup()  // Put your setup code here, to run once:
 
 
     // TESTING
-    sMoveToDefault();
+    //sMoveToDefault();
     //    sMoveAbsDEG(R_HIP_ROLL, 0, 2000);
     //    sMoveAbsDEG(R_HIP_PITCH, 0, 2000);
     //    sMoveAbsDEG(R_KNEE_PITCH, 0, 2000);
     //    sMoveAbsDEG(R_ANKLE_ROLL, 0, 2000);
     //    sMoveAbsDEG(R_ANKLE_PITCH, 0, 2000);
-    delay(2000);
+    //delay(2000);
     //sMoveAbsDEG(R_HIP_ROLL, 45, 2000);
     //sMoveAbsDEG(R_HIP_PITCH, 45, 2000);
     //sMoveAbsDEG(R_KNEE_PITCH, 45, 2000);
     //sMoveAbsDEG(R_ANKLE_PITCH, 45, 2000);
-    sMoveAbsDEG(R_ANKLE_ROLL, 70, 0);
-    sMoveAbsDEG(L_ANKLE_ROLL, 70, 2000);
-    sMoveAbsDEG(R_ANKLE_ROLL, 0, 0);
-    sMoveAbsDEG(L_ANKLE_ROLL, 0, 2000);
-    sMoveAbsDEG(R_ANKLE_ROLL, 70, 0);
-    sMoveAbsDEG(L_ANKLE_ROLL, 0, 2000);
-    sMoveAbsDEG(R_ANKLE_ROLL, 0, 0);
-    sMoveAbsDEG(L_ANKLE_ROLL, 70, 2000);
-    sMoveAbsDEG(R_ANKLE_ROLL, 40, 0);
-    sMoveAbsDEG(L_ANKLE_ROLL, 40, 2000);
-
+//    sMoveAbsDEG(R_ANKLE_ROLL, 70, 0);
+//    sMoveAbsDEG(L_ANKLE_ROLL, 70, 2000);
+//    sMoveAbsDEG(R_ANKLE_ROLL, 0, 0);
+//    sMoveAbsDEG(L_ANKLE_ROLL, 0, 2000);
+//    sMoveAbsDEG(R_ANKLE_ROLL, 70, 0);
+//    sMoveAbsDEG(L_ANKLE_ROLL, 0, 2000);
+//    sMoveAbsDEG(R_ANKLE_ROLL, 0, 0);
+//    sMoveAbsDEG(L_ANKLE_ROLL, 70, 2000);
+//    sMoveAbsDEG(R_ANKLE_ROLL, 40, 0);
+//    sMoveAbsDEG(L_ANKLE_ROLL, 40, 2000);
+    
+    sMoveRelDEG(R_ANKLE_ROLL, 0, 0);
+    sMoveRelDEG(L_ANKLE_ROLL, 0, 2000);
+    sMoveRelDEG(R_ANKLE_ROLL, 20, 0);
+    sMoveRelDEG(L_ANKLE_ROLL, 20, 2000);
+    sMoveRelDEG(R_ANKLE_ROLL, -20, 0);
+    sMoveRelDEG(L_ANKLE_ROLL, -20, 2000);
+    sMoveRelDEG(R_ANKLE_ROLL, 10, 0);
+    sMoveRelDEG(L_ANKLE_ROLL, 10, 100);
+    sMoveRelDEG(R_ANKLE_ROLL, -10, 0);
+    sMoveRelDEG(L_ANKLE_ROLL, -10, 100);
+    sMoveRelDEG(R_ANKLE_ROLL, 0, 0);
+    sMoveRelDEG(L_ANKLE_ROLL, 0, 2000);
     // TESTING
 }
 
