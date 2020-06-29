@@ -15,42 +15,7 @@
     by Steven Liao
 */
 
-// Include Fabrik2D library
-#include <FABRIK2D.h>
-
-// Include RAMP library
-#include <Ramp.h>
-
-int fabrik_lengths[] = {58, 58, 55};    // 3DOF arm with values for shoulder to elbow, elbow to wrist and wrist to end effector.
-Fabrik2D fabrik2D(4, fabrik_lengths);   // This arm has 4 joints; one in the origin, the elbow, the wrist and the end effector.
-
-rampFloat a_zero;
-rampFloat a_one;
-rampFloat a_two;
-
-float fabrik_x = -50;
-float fabrik_y = 130;
-
-float angleOfTool = .45;
-
-// STUFF TO TEST
-int zero_mid = 1425;
-int one_mid = 1475;
-int two_mid = 1540;
-
-int steps = 1024;
-
-int zero_low = zero_mid - steps;
-int zero_high = zero_mid + steps;
-
-int one_low = one_mid - steps;
-int one_high = one_mid + steps;
-
-int two_low = two_mid - steps;
-int two_high = two_mid + steps;
-// STUFF TO TEST
-
-bool DEBUG = true;
+bool DEBUG = false;
 
 /*  ------------------------------------------------------------------------------------------------------*/
 
@@ -71,7 +36,6 @@ bool DEBUG = true;
 #define SERVOS_IN_LEG 5             // Number of servos per leg
 #define MOVE_DEFAULT_TIME 550       // Default time of delay for servos
 
-
 // Easy to read names for the servos. Also lets us know which one is on which port
 #define HEAD_YAW        1
 
@@ -87,6 +51,9 @@ bool DEBUG = true;
 #define R_HIP_PITCH     24
 #define R_HIP_ROLL      25
 
+const byte maxDataLength = 20;          //Max length of string
+char receivedChars[maxDataLength + 1];  //string (the +1 is for the null char
+
 
 /*  ------------------------------------------------------------------------------------------------------
     [6/??/2020] setup > MUST HAVE
@@ -101,41 +68,10 @@ void setup()  // Put your setup code here, to run once:
 
 
     // TESTING
-    //sMoveToDefault();
-    //    sMoveAbsDEG(R_HIP_ROLL, 0, 2000);
-    //    sMoveAbsDEG(R_HIP_PITCH, 0, 2000);
-    //    sMoveAbsDEG(R_KNEE_PITCH, 0, 2000);
-    //    sMoveAbsDEG(R_ANKLE_ROLL, 0, 2000);
-    //    sMoveAbsDEG(R_ANKLE_PITCH, 0, 2000);
-    //delay(2000);
-    //sMoveAbsDEG(R_HIP_ROLL, 45, 2000);
-    //sMoveAbsDEG(R_HIP_PITCH, 45, 2000);
-    //sMoveAbsDEG(R_KNEE_PITCH, 45, 2000);
-    //sMoveAbsDEG(R_ANKLE_PITCH, 45, 2000);
-//    sMoveAbsDEG(R_ANKLE_ROLL, 70, 0);
-//    sMoveAbsDEG(L_ANKLE_ROLL, 70, 2000);
-//    sMoveAbsDEG(R_ANKLE_ROLL, 0, 0);
-//    sMoveAbsDEG(L_ANKLE_ROLL, 0, 2000);
-//    sMoveAbsDEG(R_ANKLE_ROLL, 70, 0);
-//    sMoveAbsDEG(L_ANKLE_ROLL, 0, 2000);
-//    sMoveAbsDEG(R_ANKLE_ROLL, 0, 0);
-//    sMoveAbsDEG(L_ANKLE_ROLL, 70, 2000);
-//    sMoveAbsDEG(R_ANKLE_ROLL, 40, 0);
-//    sMoveAbsDEG(L_ANKLE_ROLL, 40, 2000);
-    
-    sMoveRelDEG(R_ANKLE_ROLL, 0, 0);
-    sMoveRelDEG(L_ANKLE_ROLL, 0, 2000);
-    sMoveRelDEG(R_ANKLE_ROLL, 20, 0);
-    sMoveRelDEG(L_ANKLE_ROLL, 20, 2000);
-    sMoveRelDEG(R_ANKLE_ROLL, -20, 0);
-    sMoveRelDEG(L_ANKLE_ROLL, -20, 2000);
-    sMoveRelDEG(R_ANKLE_ROLL, 10, 0);
-    sMoveRelDEG(L_ANKLE_ROLL, 10, 100);
-    sMoveRelDEG(R_ANKLE_ROLL, -10, 0);
-    sMoveRelDEG(L_ANKLE_ROLL, -10, 100);
-    sMoveRelDEG(R_ANKLE_ROLL, 0, 0);
-    sMoveRelDEG(L_ANKLE_ROLL, 0, 2000);
+    //readyToWalk();
     // TESTING
+    //walkingV7(2);
+    Serial.println("Ready");
 }
 
 /*  ------------------------------------------------------------------------------------------------------
@@ -144,4 +80,6 @@ void setup()  // Put your setup code here, to run once:
 void loop()
 {
     // Empty. Things are done in Tasks.
+
+    serialControl();
 }

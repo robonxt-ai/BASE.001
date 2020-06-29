@@ -1,3 +1,33 @@
+//// Include Fabrik2D library
+//#include <FABRIK2D.h>
+//
+//int fabrik_lengths[] = {58, 58, 55};    // 3DOF arm with values for shoulder to elbow, elbow to wrist and wrist to end effector.
+//Fabrik2D fabrik2D(4, fabrik_lengths);   // This arm has 4 joints; one in the origin, the elbow, the wrist and the end effector.
+//
+//float fabrik_x = -50;
+//float fabrik_y = 130;
+//
+//float angleOfTool = .45;
+//
+//// STUFF TO TEST
+//int zero_mid = 1425;
+//int one_mid = 1475;
+//int two_mid = 1540;
+//
+//int steps = 1024;
+//
+//int zero_low = zero_mid - steps;
+//int zero_high = zero_mid + steps;
+//
+//int one_low = one_mid - steps;
+//int one_high = one_mid + steps;
+//
+//int two_low = two_mid - steps;
+//int two_high = two_mid + steps;
+//// STUFF TO TEST
+
+
+
 //    Serial.println();
 //    Serial.print("ang0");
 //    Serial.print("\t");
@@ -106,6 +136,52 @@ int sMoveToDefault()
     return (ok); // Returns ok value to the previous function
 }
 
+uint8_t receiveSerial(char* buff, uint8_t sizevar)
+{
+    static uint8_t ctr = 0; // store the current position in the buff array
+    uint8_t ch; // store the last character received
+    if (Serial.available() > 0) // true when characters in serial input buffer
+    {
+        ch = Serial.read(); // store character from buffer in ch
+        if ( ctr < sizevar)   // if the ctr is less than your buffer yet
+        {
+            buff[ctr++] = ch; // add it to your buffer
+        }
+        if (ch == '\r') // if that character is a carriage return
+        {
+            buff[ctr - 1] = 0; // replace '\r' with '\0' (string termination)
+            ctr = 0; // reset the pointer
+            Serial.print("Command: "); // print a string and stay on the same line
+            Serial.println(buff); // print received followed by a new line
+            return 1;
+        }
+        else
+            return 0;
+    } //end serial was available
+    return 0;
+}
+
+void serialControl()
+    {
+        if (receiveSerial(receivedChars, sizeof(receivedChars)))
+        {
+            if (strcmp(receivedChars, "walk") == 0) // Compare received string
+            {
+                walkingV7(3);
+                sDelay(MOVE_DEFAULT_TIME);
+            }
+            else if (strcmp(receivedChars, "ready") == 0) // Compare received string
+            {
+                readyToWalk();
+                sDelay(MOVE_DEFAULT_TIME);
+            }
+            else // none of the ifs above were true
+            {
+                Serial.println("Not Recognized");
+            }
+            Serial.println(" done");
+        }
+    }
 
 ///*  ------------------------------------------------------------------------------------------------------
 //    [6/21/2020] sMoveDegAbsToDefault > Moves an servo to a degree (??? to ???) NEED TO EDIT TO DO ACTUALLY DO DEGREES FOR ALL SERVOS
