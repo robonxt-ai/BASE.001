@@ -1,3 +1,17 @@
+/*
+    Servo Controller for SainSmart Humanoid Robot Kit
+    ------
+    Goals:
+    06/28/2020: last working version: movement_v2.ino
+    06/28/2020: updated for humanoid_v1.1-IK
+    ------
+    A (start from small)™ program based off what dad taught me
+    ------
+    modified Jun 26 2020
+    by Steven Liao (with dad)
+*/
+
+
 //experimental array sorting for future use.
 int leanRightARR[][2] =
 {
@@ -165,7 +179,7 @@ void rightSideLeanLeft()
 void leftSideBalanceLeft()
 {
     sMoveRelToDefault(L_LEG_FOOT, -110, 0);
-    sMoveRelToDefault(L_LEG_PELVIS, -80, 0);
+        sMoveRelToDefault(L_LEG_PELVIS, -80, 0);
 
 }
 void rightSideBalanceRight()
