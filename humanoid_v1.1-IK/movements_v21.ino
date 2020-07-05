@@ -24,8 +24,9 @@
 //#define R_HIP_PITCH     24
 //#define R_HIP_ROLL      25
 
-int leanForward = 10;
-int diffOfJoint = 0;
+int leanForward = 40;
+int diffOfJoint = 25;
+int diffSway = 100;
 
 //experimental array sorting for future use.
 int leanRightARR[][2] =
@@ -86,12 +87,12 @@ void leftLegFwd()
     //Left foot forward
     sMoveRelMS(L_HIP_PITCH, -500 - (leanForward / 2), 0);
     sMoveRelMS(L_KNEE_PITCH,   600, 0);
-    sMoveRelMS(L_ANKLE_PITCH, -100 - (leanForward / 2), 0);
+    sMoveRelMS(L_ANKLE_PITCH, -100 - (leanForward / 2) - diffOfJoint, 0);
 
 }
 void rightLegFwd()
 {
-    sMoveRelMS(R_ANKLE_PITCH, 100 + (leanForward / 2), 0);
+    sMoveRelMS(R_ANKLE_PITCH, 100 + (leanForward / 2) + diffOfJoint, 0);
     sMoveRelMS(R_KNEE_PITCH, -600, 0);
     sMoveRelMS(R_HIP_PITCH, 500 + (leanForward / 2), 0);
 }
@@ -100,12 +101,12 @@ void leftLegFwdLift()
 {
     sMoveRelMS(L_HIP_PITCH, -600 - (leanForward / 2), 0);
     sMoveRelMS(L_KNEE_PITCH,   800, 0);
-    sMoveRelMS(L_ANKLE_PITCH, -200 - (leanForward / 2), 0);
+    sMoveRelMS(L_ANKLE_PITCH, -200 - (leanForward / 2) - diffOfJoint, 0);
 
 }
 void rightLegFwdLift()
 {
-    sMoveRelMS(R_ANKLE_PITCH, 200 + (leanForward / 2), 0);
+    sMoveRelMS(R_ANKLE_PITCH, 200 + (leanForward / 2) + diffOfJoint, 0);
     sMoveRelMS(R_KNEE_PITCH, -800, 0);
     sMoveRelMS(R_HIP_PITCH, 600 + (leanForward / 2), 0);
 }
@@ -117,30 +118,30 @@ void rightLegFwdLift()
 ////////////////////// Backward (Normal + Lift)
 void leftLegBack()
 {
-    sMoveRelMS(L_HIP_PITCH, -50 - (leanForward / 2) + diffOfJoint, 0);
+    sMoveRelMS(L_HIP_PITCH, -50 - (leanForward / 2) , 0);
     sMoveRelMS(L_KNEE_PITCH,   500, 0);
-    sMoveRelMS(L_ANKLE_PITCH, -450 - (leanForward / 2), 0);
+    sMoveRelMS(L_ANKLE_PITCH, -450 - (leanForward / 2) - diffOfJoint, 0);
 
 }
 void rightLegBack()
 {
-    sMoveRelMS(R_ANKLE_PITCH, 450 + (leanForward / 2), 0);
+    sMoveRelMS(R_ANKLE_PITCH, 450 + (leanForward / 2) + diffOfJoint, 0);
     sMoveRelMS(R_KNEE_PITCH, -500, 0);
-    sMoveRelMS(R_HIP_PITCH, 50 + (leanForward / 2) - diffOfJoint, 0);
+    sMoveRelMS(R_HIP_PITCH, 50 + (leanForward / 2) , 0);
 }
 
 void leftLegBackLift()
 {
-    sMoveRelMS(L_HIP_PITCH, -250 - (leanForward / 2) + diffOfJoint, 0);
+    sMoveRelMS(L_HIP_PITCH, -250 - (leanForward / 2) , 0);
     sMoveRelMS(L_KNEE_PITCH,   900, 0);
-    sMoveRelMS(L_ANKLE_PITCH, -650 - (leanForward / 2), 0);
+    sMoveRelMS(L_ANKLE_PITCH, -650 - (leanForward / 2) - diffOfJoint, 0);
 
 }
 void rightLegBackLift()
 {
-    sMoveRelMS(R_ANKLE_PITCH, 650 + (leanForward / 2), 0);
+    sMoveRelMS(R_ANKLE_PITCH, 650 + (leanForward / 2) + diffOfJoint, 0);
     sMoveRelMS(R_KNEE_PITCH, -900, 0);
-    sMoveRelMS(R_HIP_PITCH, 250 + (leanForward / 2) - diffOfJoint, 0);
+    sMoveRelMS(R_HIP_PITCH, 250 + (leanForward / 2), 0);
 }
 //////////////////////////////////////////////////////////////////////////////
 
@@ -193,14 +194,14 @@ void rightSideLeanLeft()
 ////////////////////// Balance (Left + Right)
 void leftSideBalanceLeft()
 {
-    sMoveRelMS(L_ANKLE_ROLL, -125, 0);
+    sMoveRelMS(L_ANKLE_ROLL, -120, 0);
     sMoveRelMS(L_HIP_ROLL, -75, 0);
 
 }
 void rightSideBalanceRight()
 {
     sMoveRelMS(R_HIP_ROLL, 75, 0);
-    sMoveRelMS(R_ANKLE_ROLL, 125, 0);
+    sMoveRelMS(R_ANKLE_ROLL, 120, 0);
 
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -340,25 +341,29 @@ void walkingV6(int steps)
 /*  ------------------------------------------------------------------------------------------------------
     [6/10/2020] ??? > ???
     ------------------------------------------------------------------------------------------------------*/
-void walkingV7(int steps)
+void walkingV7(int steps, float walkSpeed)
 {
     // Get ready
     readyToWalk();
     for (int i = 0; i < steps; i++)
     {
+        //  leanForward = 40;
         ///////////////////////////////////////////////////
         /////////// Left step whole
         // Left leg up
         balanceRight();
-        sDelay(650);
+        sDelay(walkSpeed * 650);
         leftLegReadyLift();
         balanceRight();
-        sDelay(250);
+        sDelay(walkSpeed * 200);
 
         leftLegFwd();
+        leanForward = leanForward + diffSway;
+        leanRight();
         rightLegReadyLift();
+        leanForward = leanForward - diffSway;
         rightLegBack();
-        sDelay(MOVE_DEFAULT_TIME + 200);
+        sDelay(walkSpeed * MOVE_DEFAULT_TIME + 200);
         //vTaskDelay( 100 / portTICK_PERIOD_MS );
         ///////////////////////////////////////////////////
 
@@ -367,13 +372,18 @@ void walkingV7(int steps)
         /////////// Right step whole
         // Right leg up
         balanceLeft();
-        sDelay(650);
+        sDelay(walkSpeed * 650);
         rightLegReadyLift();
         balanceLeft();
-        sDelay(250);
+        sDelay(walkSpeed * 200);
+
         rightLegFwd();
+        leanForward = leanForward + diffSway;
+        leanLeft();
+        leftLegReadyLift();
+        leanForward = leanForward - diffSway;
         leftLegBack();
-        sDelay(MOVE_DEFAULT_TIME + 200);
+        sDelay(walkSpeed * MOVE_DEFAULT_TIME + 200);
         //vTaskDelay( 100 / portTICK_PERIOD_MS );
         ///////////////////////////////////////////////////
     }
@@ -382,10 +392,10 @@ void walkingV7(int steps)
     balanceRight();
     rightLegReady();
     leftLegReadyLift();
-    sDelay(MOVE_DEFAULT_TIME);
+    sDelay(walkSpeed * MOVE_DEFAULT_TIME);
 
     leftLegReady();
-    sDelay(MOVE_DEFAULT_TIME);
+    sDelay(walkSpeed * MOVE_DEFAULT_TIME);
     readyToWalk();
 }
 

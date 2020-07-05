@@ -167,7 +167,7 @@ void serialControl()
         {
             if (strcmp(receivedChars, "walk") == 0) // Compare received string
             {
-                walkingV7(3);
+                walkingV7(3, 1.2);
                 sDelay(MOVE_DEFAULT_TIME);
             }
             else if (strcmp(receivedChars, "ready") == 0) // Compare received string
