@@ -162,26 +162,45 @@ uint8_t receiveSerial(char* buff, uint8_t sizevar)
 }
 
 void serialControl()
+{
+    if (receiveSerial(receivedChars, sizeof(receivedChars)))
     {
-        if (receiveSerial(receivedChars, sizeof(receivedChars)))
+        if (strcmp(receivedChars, "walk") == 0) // Compare received string
         {
-            if (strcmp(receivedChars, "walk") == 0) // Compare received string
-            {
-                walkingV7(3, 1.2);
-                sDelay(MOVE_DEFAULT_TIME);
-            }
-            else if (strcmp(receivedChars, "ready") == 0) // Compare received string
-            {
-                readyToWalk();
-                sDelay(MOVE_DEFAULT_TIME);
-            }
-            else // none of the ifs above were true
-            {
-                Serial.println("Not Recognized");
-            }
-            Serial.println(" done");
+            walkingV7(3, 1.2);
+            sDelay(MOVE_DEFAULT_TIME);
         }
+        else if (strcmp(receivedChars, "ready") == 0) // Compare received string
+        {
+            readyToWalk();
+            sDelay(MOVE_DEFAULT_TIME);
+        }
+        else if (strcmp(receivedChars, "stand") == 0) // Compare received string
+        {
+            sMoveRelMS(L_HIP_ROLL, 0, 0);
+            sMoveRelMS(L_HIP_PITCH, 0, 0);
+            sMoveRelMS(L_KNEE_PITCH, 0, 0);
+            sMoveRelMS(L_ANKLE_PITCH, 0, 0);
+            sMoveRelMS(L_ANKLE_ROLL, 0, 0);
+            sMoveRelMS(R_HIP_ROLL, 0, 0);
+            sMoveRelMS(R_HIP_PITCH, 0, 0);
+            sMoveRelMS(R_KNEE_PITCH, 0, 0);
+            sMoveRelMS(R_ANKLE_PITCH, 0, 0);
+            sMoveRelMS(R_ANKLE_ROLL, 0, 200);
+        }
+        if ( strncmp(receivedChars, "ser.", 4 ) == 0 )
+        {
+            char *sub_command;
+            sub_command = &receivedChars[4];
+            Serial2.println(sub_command);
+        }
+        else // none of the ifs above were true
+        {
+            Serial.println("Not Recognized");
+        }
+        Serial.println(" done");
     }
+}
 
 ///*  ------------------------------------------------------------------------------------------------------
 //    [6/21/2020] sMoveDegAbsToDefault > Moves an servo to a degree (??? to ???) NEED TO EDIT TO DO ACTUALLY DO DEGREES FOR ALL SERVOS

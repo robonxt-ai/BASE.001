@@ -24,10 +24,10 @@
 // 6/26/2020 23:32 S9 to 1530 (-1000/+1000), S10 to 1480 (-1000/+1000), S11 to 1475 (-1000/+1000), S12 to
 // 6/27/2020 14:32 S12 to 1410
 // 6/28/2020 14:32 S12 to 1500
-
+// 7/6/2020 18:32 S22 to 1555
 
 // Store servo status only
-// Id, default pos, min (value), max (value), min (generated), max (generated)
+// Id, centered pos, min (value), max (value), min (generated), max (generated)
 int servosInfo[][6]
 {
     0,  -1, -1, -1, -1, -1,         // Does not exist
@@ -38,7 +38,7 @@ int servosInfo[][6]
     5,  -1, -1, -1, -1, -1,
     6,  -1, -1, -1, -1, -1,
     7,  -1, -1, -1, -1, -1,
-    8,  995, 300, 1200, -1, -1,     // L_HIP_ROLL
+    8,  1000, 300, 1200, -1, -1,     // L_HIP_ROLL
     9,  1530, 1000, 1000, -1, -1,   // L_HIP_PITCH
     10, 1480, 1000, 1000, -1, -1,   // L_KNEE_PITCH
     11, 1475, 1000, 1000, -1, -1,   // L_ANKLE_PITCH
@@ -52,7 +52,7 @@ int servosInfo[][6]
     19, -1, -1, -1, -1, -1,
     20, -1, -1, -1, -1, -1,
     21, 1480, 520, 280, -1, -1,     // R_ANKLE_ROLL
-    22, 1520, 1000, 1000, -1, -1,   // R_ANKLE_PITCH
+    22, 1555, 1000, 1000, -1, -1,   // R_ANKLE_PITCH
     23, 1500, 1000, 1000, -1, -1,   // R_KNEE_PITCH
     24, 1420, 1000, 1000, -1, -1,   // R_HIP_PITCH
     25, 2000, 1200, 300, -1, -1,    // R_HIP_ROLL
@@ -97,6 +97,43 @@ int servosUpdatedPos[][2]
     23, -1, // R_KNEE_PITCH
     24, -1, // R_HIP_PITCH
     25, -1, // R_HIP_ROLL
+    26, -1,
+    27, -1,
+    28, -1,
+    29, -1, //
+    30, -1, //
+    31, -1, //
+    32, -1
+};
+
+int servosReadyPos[][2]
+{
+    0, -1,  // Does not exist
+    1, -1,  // HEAD_YAW
+    2, -1,  //
+    3, -1,  //
+    4, -1,  //
+    5, -1,
+    6, -1,
+    7, -1,
+    8, 1000,  // L_HIP_ROLL
+    9, 1750,  // L_HIP_PITCH
+    10, 1250, // L_KNEE_PITCH
+    11, 1475, // L_ANKLE_PITCH
+    12, 1500, // L_ANKLE_ROLL
+    13, -1,
+    14, -1,
+    15, -1,
+    16, -1,
+    17, -1,
+    18, -1,
+    19, -1,
+    20, -1,
+    21, 1480, // R_ANKLE_ROLL
+    22, 1555, // R_ANKLE_PITCH
+    23, -1, // R_KNEE_PITCH
+    24, -1, // R_HIP_PITCH
+    25, 2000, // R_HIP_ROLL
     26, -1,
     27, -1,
     28, -1,

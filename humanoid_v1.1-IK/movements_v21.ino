@@ -11,62 +11,31 @@
     by Steven Liao (with dad)
 */
 
-
-//#define L_HIP_ROLL      8
-//#define L_HIP_PITCH     9
-//#define L_KNEE_PITCH    10
-//#define L_ANKLE_PITCH   11
-//#define L_ANKLE_ROLL    12
-//
-//#define R_ANKLE_ROLL    21
-//#define R_ANKLE_PITCH   22
-//#define R_KNEE_PITCH    23
-//#define R_HIP_PITCH     24
-//#define R_HIP_ROLL      25
-
 int leanForward = 40;
 int diffOfJoint = 25;
 int diffSway = 100;
-
-//experimental array sorting for future use.
-int leanRightARR[][2] =
-{
-    L_HIP_ROLL,     70,
-    L_ANKLE_ROLL,   80,
-    R_ANKLE_ROLL,   125,
-    R_HIP_ROLL,     80
-};
-
-int ll_readyARR[][2] =
-{
-    L_HIP_ROLL,     0,
-    L_HIP_PITCH,    -350,
-    L_KNEE_PITCH,   600,
-    L_ANKLE_PITCH,  -350,
-    L_ANKLE_ROLL,   0
-};
 
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////// Ready (Normal + Lift)
 void leftLegReady()
 {
     //Left foot forward
-    sMoveRelMS(L_HIP_PITCH, -300 - (leanForward / 2), 0);
-    sMoveRelMS(L_KNEE_PITCH,   600, 0);
-    sMoveRelMS(L_ANKLE_PITCH, -300 - (leanForward / 2), 0);
+    sMoveRelMS(L_HIP_PITCH, 230, 0);
+    sMoveRelMS(L_KNEE_PITCH, -225, 0);
+    sMoveRelMS(L_ANKLE_PITCH, -0, 0);
 
 }
 void rightLegReady()
 {
-    sMoveRelMS(R_ANKLE_PITCH, 300 + (leanForward / 2), 0);
-    sMoveRelMS(R_KNEE_PITCH, -600, 0);
-    sMoveRelMS(R_HIP_PITCH, 300 + (leanForward / 2), 0);
+    sMoveRelMS(R_ANKLE_PITCH, 0, 0);
+    sMoveRelMS(R_KNEE_PITCH, 225, 0);
+    sMoveRelMS(R_HIP_PITCH, -230, 0);
 }
 
 void leftLegReadyLift()
 {
     //Left foot forward
-    sMoveRelMS(L_HIP_PITCH, -400 - (leanForward / 2), 0);
+    sMoveRelMS(L_HIP_PITCH, 400 - (leanForward / 2), 0);
     sMoveRelMS(L_KNEE_PITCH,   800, 0);
     sMoveRelMS(L_ANKLE_PITCH, -400 - (leanForward / 2), 0);
 
@@ -75,7 +44,7 @@ void rightLegReadyLift()
 {
     sMoveRelMS(R_ANKLE_PITCH, 400 + (leanForward / 2), 0);
     sMoveRelMS(R_KNEE_PITCH, -800, 0);
-    sMoveRelMS(R_HIP_PITCH, 400 + (leanForward / 2), 0);
+    sMoveRelMS(R_HIP_PITCH, -400 + (leanForward / 2), 0);
 }
 //////////////////////////////////////////////////////////////////////////////
 
@@ -85,7 +54,7 @@ void rightLegReadyLift()
 void leftLegFwd()
 {
     //Left foot forward
-    sMoveRelMS(L_HIP_PITCH, -500 - (leanForward / 2), 0);
+    sMoveRelMS(L_HIP_PITCH, 500 + (leanForward / 2), 0);
     sMoveRelMS(L_KNEE_PITCH,   600, 0);
     sMoveRelMS(L_ANKLE_PITCH, -100 - (leanForward / 2) - diffOfJoint, 0);
 
@@ -94,12 +63,12 @@ void rightLegFwd()
 {
     sMoveRelMS(R_ANKLE_PITCH, 100 + (leanForward / 2) + diffOfJoint, 0);
     sMoveRelMS(R_KNEE_PITCH, -600, 0);
-    sMoveRelMS(R_HIP_PITCH, 500 + (leanForward / 2), 0);
+    sMoveRelMS(R_HIP_PITCH, -500 - (leanForward / 2), 0);
 }
 
 void leftLegFwdLift()
 {
-    sMoveRelMS(L_HIP_PITCH, -600 - (leanForward / 2), 0);
+    sMoveRelMS(L_HIP_PITCH, 600 + (leanForward / 2), 0);
     sMoveRelMS(L_KNEE_PITCH,   800, 0);
     sMoveRelMS(L_ANKLE_PITCH, -200 - (leanForward / 2) - diffOfJoint, 0);
 
@@ -108,7 +77,7 @@ void rightLegFwdLift()
 {
     sMoveRelMS(R_ANKLE_PITCH, 200 + (leanForward / 2) + diffOfJoint, 0);
     sMoveRelMS(R_KNEE_PITCH, -800, 0);
-    sMoveRelMS(R_HIP_PITCH, 600 + (leanForward / 2), 0);
+    sMoveRelMS(R_HIP_PITCH, -600 - (leanForward / 2), 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -118,7 +87,7 @@ void rightLegFwdLift()
 ////////////////////// Backward (Normal + Lift)
 void leftLegBack()
 {
-    sMoveRelMS(L_HIP_PITCH, -50 - (leanForward / 2) , 0);
+    sMoveRelMS(L_HIP_PITCH, 50 + (leanForward / 2) , 0);
     sMoveRelMS(L_KNEE_PITCH,   500, 0);
     sMoveRelMS(L_ANKLE_PITCH, -450 - (leanForward / 2) - diffOfJoint, 0);
 
@@ -127,12 +96,12 @@ void rightLegBack()
 {
     sMoveRelMS(R_ANKLE_PITCH, 450 + (leanForward / 2) + diffOfJoint, 0);
     sMoveRelMS(R_KNEE_PITCH, -500, 0);
-    sMoveRelMS(R_HIP_PITCH, 50 + (leanForward / 2) , 0);
+    sMoveRelMS(R_HIP_PITCH, -50 - (leanForward / 2) , 0);
 }
 
 void leftLegBackLift()
 {
-    sMoveRelMS(L_HIP_PITCH, -250 - (leanForward / 2) , 0);
+    sMoveRelMS(L_HIP_PITCH, 250 + (leanForward / 2) , 0);
     sMoveRelMS(L_KNEE_PITCH,   900, 0);
     sMoveRelMS(L_ANKLE_PITCH, -650 - (leanForward / 2) - diffOfJoint, 0);
 
@@ -141,7 +110,7 @@ void rightLegBackLift()
 {
     sMoveRelMS(R_ANKLE_PITCH, 650 + (leanForward / 2) + diffOfJoint, 0);
     sMoveRelMS(R_KNEE_PITCH, -900, 0);
-    sMoveRelMS(R_HIP_PITCH, 250 + (leanForward / 2), 0);
+    sMoveRelMS(R_HIP_PITCH, -250 - (leanForward / 2), 0);
 }
 //////////////////////////////////////////////////////////////////////////////
 
@@ -151,12 +120,12 @@ void rightLegBackLift()
 void leftSideReady()
 {
     sMoveRelMS(L_HIP_ROLL, 0, 0);
-    sMoveRelMS(L_ANKLE_ROLL,   0, 0);
+    sMoveRelMS(L_ANKLE_ROLL, 0, 0);
 }
 void rightSideReady()
 {
     sMoveRelMS(R_HIP_ROLL, 0, 0);
-    sMoveRelMS(R_ANKLE_ROLL,   0, 0);
+    sMoveRelMS(R_ANKLE_ROLL, 0, 0);
 }
 
 void leftSideLeanRight()
