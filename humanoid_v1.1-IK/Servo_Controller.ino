@@ -3,13 +3,13 @@
     ------
     Goals:
     04/19/2020: base system implemented
-    06/26/2020: updating comments. need to fix the move degrees functions so they will acceratelly move in degrees for any servo regardless of range
+    06/26/2020: updating comments. need to fix the move degrees functions so they will accuratelly move in degrees for any servo regardless of range
     06/27/2020: working degrees system. some servos are faulty, replacing...
     ------
     A (start from small)™ program based off what dad taught me
     ------
     modified Jun 26 2020
-    by Steven Liao (with dad)
+    by robonxt (with dad)
 */
 
 // array 1 4/8/2020 14:48
@@ -25,6 +25,7 @@
 // 6/27/2020 14:32 S12 to 1410
 // 6/28/2020 14:32 S12 to 1500
 // 7/6/2020 18:32 S22 to 1555
+// 7/16/2020 18:32 S12 to 1470
 
 // Store servo status only
 // Id, centered pos, min (value), max (value), min (generated), max (generated)
@@ -38,11 +39,11 @@ int servosInfo[][6]
     5,  -1, -1, -1, -1, -1,
     6,  -1, -1, -1, -1, -1,
     7,  -1, -1, -1, -1, -1,
-    8,  1000, 300, 1200, -1, -1,     // L_HIP_ROLL
+    8,  990, 300, 1200, -1, -1,    // L_HIP_ROLL
     9,  1530, 1000, 1000, -1, -1,   // L_HIP_PITCH
     10, 1480, 1000, 1000, -1, -1,   // L_KNEE_PITCH
     11, 1475, 1000, 1000, -1, -1,   // L_ANKLE_PITCH
-    12, 1500, 280, 520, -1, -1,     // L_ANKLE_ROLL
+    12, 1470, 280, 520, -1, -1,     // L_ANKLE_ROLL
     13, -1, -1, -1, -1, -1,
     14, -1, -1, -1, -1, -1,
     15, -1, -1, -1, -1, -1,
@@ -108,39 +109,39 @@ int servosUpdatedPos[][2]
 
 int servosReadyPos[][2]
 {
-    0, -1,  // Does not exist
-    1, -1,  // HEAD_YAW
-    2, -1,  //
-    3, -1,  //
-    4, -1,  //
-    5, -1,
-    6, -1,
-    7, -1,
-    8, 1000,  // L_HIP_ROLL
-    9, 1750,  // L_HIP_PITCH
-    10, 1250, // L_KNEE_PITCH
-    11, 1475, // L_ANKLE_PITCH
-    12, 1500, // L_ANKLE_ROLL
-    13, -1,
-    14, -1,
-    15, -1,
-    16, -1,
-    17, -1,
-    18, -1,
-    19, -1,
-    20, -1,
-    21, 1480, // R_ANKLE_ROLL
-    22, 1555, // R_ANKLE_PITCH
-    23, -1, // R_KNEE_PITCH
-    24, -1, // R_HIP_PITCH
-    25, 2000, // R_HIP_ROLL
-    26, -1,
-    27, -1,
-    28, -1,
-    29, -1, //
-    30, -1, //
-    31, -1, //
-    32, -1
+    0, 0,  // Does not exist
+    1, 0,  // HEAD_YAW
+    2, 0,  //
+    3, 0,  //
+    4, 0,  //
+    5, 0,
+    6, 0,
+    7, 0,
+    8, 0,  // L_HIP_ROLL
+    9, 280,  // L_HIP_PITCH
+    10, 0, // L_KNEE_PITCH
+    11, -120, // L_ANKLE_PITCH
+    12, 0, // L_ANKLE_ROLL
+    13, 0,
+    14, 0,
+    15, 0,
+    16, 0,
+    17, 0,
+    18, 0,
+    19, 0,
+    20, 0,
+    21, 0, // R_ANKLE_ROLL
+    22, 120, // R_ANKLE_PITCH
+    23, 0, // R_KNEE_PITCH
+    24, -280, // R_HIP_PITCH
+    25, 0, // R_HIP_ROLL
+    26, 0,
+    27, 0,
+    28, 0,
+    29, 0, //
+    30, 0, //
+    31, 0, //
+    32, 0
 };
 
 // ANKLE_ROLL, ANKLE_PITCH, KNEE_PITCH, R_HIP_PITCH, R_HIP_ROLL
@@ -156,7 +157,15 @@ int mirroredLegs[2][5]
     ------------------------------------------------------------------------------------------------------*/
 int sGetDefaultPos(int servo)
 {
-    return (servosInfo[servo][SERVO_DEFAULT_POS]); // Returns servo's relative min pos
+    return (servosInfo[servo][SERVO_DEFAULT_POS]); // Returns servo's default pos
+}
+
+/*  ------------------------------------------------------------------------------------------------------
+    [4/8/2020] sGetDefaultReadyPos > Returns servo's default ready pos
+    ------------------------------------------------------------------------------------------------------*/
+int sGetDefaultReadyPos(int servo)
+{
+    return (servosReadyPos[servo][1]); // Returns servo's default ready pos
 }
 
 /*  ------------------------------------------------------------------------------------------------------
@@ -343,6 +352,34 @@ int sMoveRelMS(int servo, int pos, int timeToPos)
     return (ok);    // Returns ok value to the previous function
 }
 
+
+/*  ------------------------------------------------------------------------------------------------------
+    [6/26/2020] sWalk > Like sMoveRelMS but for walking only (uses servosReadyPos array)
+    ------------------------------------------------------------------------------------------------------*/
+int sWalk(int servo, int pos, int timeToPos)
+{
+    int ok = -1; // Used for debugging
+    int servoPos;
+    if (sGetDefaultReadyPos(servo) == 0)
+    {
+        servoPos = sGetDefaultPos(servo);
+    }
+    else
+    {
+        servoPos = sGetDefaultReadyPos(servo) + sGetDefaultPos(servo);
+    }
+    int moveToPos = servoPos + pos;   // Adds the wanted pos on top of the default pos
+    ok = sMoveAbsMS(servo, moveToPos, timeToPos);
+    if (DEBUG)  // If debugging is turned on...
+    {
+        // Debug
+        Serial.print(F("sMoveRelMS - returns: "));
+        Serial.println(ok);
+    }
+    return (ok);    // Returns ok value to the previous function
+}
+
+
 /*  ------------------------------------------------------------------------------------------------------
     [6/26/2020] sMoveRelDEG > Moves servo to degree, assuming 0 is servo's default pos
     ------------------------------------------------------------------------------------------------------*/
@@ -402,9 +439,9 @@ int sMoveAbsDEG(int servo, float angle, int timeToPos)
 }
 
 /*  ------------------------------------------------------------------------------------------------------
-    [6/27/2020] sMoveAbsDEGOLD > Moves servo to degree, assuming 0 is servo's lowest number
+    [6/27/2020] sMoveAbsDEG_OLD > Moves servo to degree, assuming 0 is servo's lowest number
     ------------------------------------------------------------------------------------------------------*/
-int sMoveAbsDEGOLD(int servo, float angle, int timeToPos)
+int sMoveAbsDEG_OLD(int servo, float angle, int timeToPos)
 {
     int ok = -1;    // Used for debugging
     int moveToPos;

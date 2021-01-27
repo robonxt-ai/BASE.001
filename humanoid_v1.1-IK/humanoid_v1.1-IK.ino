@@ -12,7 +12,7 @@
     A (start from small)™ program based off what dad taught me
     ------
     modified Jun 26 2020
-    by Steven Liao
+    by robonxt
 */
 
 bool DEBUG = false;
@@ -66,12 +66,16 @@ void setup()  // Put your setup code here, to run once:
     // Initiate servos
     sInit();
 
-
     // TESTING
     //readyToWalk();
     // TESTING
     //walkingV7(2);
     Serial.println("Ready");
+    leftLegReady();
+    rightLegReady();
+    leanReady();
+    sDelay(650);
+
 }
 
 /*  ------------------------------------------------------------------------------------------------------
@@ -81,5 +85,5 @@ void loop()
 {
     // Empty. Things are done in Tasks.
 
-    serialControl();
+   serialControl();
 }

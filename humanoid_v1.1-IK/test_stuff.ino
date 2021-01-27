@@ -167,13 +167,17 @@ void serialControl()
     {
         if (strcmp(receivedChars, "walk") == 0) // Compare received string
         {
-            walkingV7(3, 1.2);
-            sDelay(MOVE_DEFAULT_TIME);
+            walkingV7(3, 1);
+            //sDelay(MOVE_DEFAULT_TIME);
+        }
+        if (strcmp(receivedChars, "walk2") == 0) // Compare received string
+        {
+            walkingV8(2, 1);
         }
         else if (strcmp(receivedChars, "ready") == 0) // Compare received string
         {
             readyToWalk();
-            sDelay(MOVE_DEFAULT_TIME);
+            sDelay(200);
         }
         else if (strcmp(receivedChars, "stand") == 0) // Compare received string
         {
@@ -188,7 +192,46 @@ void serialControl()
             sMoveRelMS(R_ANKLE_PITCH, 0, 0);
             sMoveRelMS(R_ANKLE_ROLL, 0, 200);
         }
-        if ( strncmp(receivedChars, "ser.", 4 ) == 0 )
+        else if (strcmp(receivedChars, "squat") == 0) // Compare received string
+        {
+            squatV1();
+            sDelay(500);
+        }
+        else if (strcmp(receivedChars, "leanL") == 0) // Compare received string
+        {
+            leanLeft();
+            sDelay(500);
+        }
+        else if (strcmp(receivedChars, "leanR") == 0) // Compare received string
+        {
+            leanRight();
+            sDelay(500);
+        }
+        else if (strcmp(receivedChars, "balanceL") == 0) // Compare received string
+        {
+            balanceLeft();
+            sDelay(500);
+        }
+        else if (strcmp(receivedChars, "balanceR") == 0) // Compare received string
+        {
+            balanceRight();
+            sDelay(500);
+        }
+        else if (strcmp(receivedChars, "leanReady") == 0) // Compare received string
+        {
+            leanReady();
+            sDelay(500);
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+        else if (strcmp(receivedChars, "turnL") == 0) // Compare received string
+        {
+            turnLeft(1);
+            sDelay(500);
+        }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        else if ( strncmp(receivedChars, "ser.", 4 ) == 0 )
         {
             char *sub_command;
             sub_command = &receivedChars[4];
@@ -196,7 +239,8 @@ void serialControl()
         }
         else // none of the ifs above were true
         {
-            Serial.println("Not Recognized");
+            Serial.print("Not Recognized: ");
+            Serial.println(receivedChars);
         }
         Serial.println(" done");
     }
@@ -239,3 +283,48 @@ void serialControl()
 //{
 //    return sMoveDegAbsToDefault(servo, Angle, sGetAbsMinPos(servo), sGetAbsMaxPos(servo), -90, 90, timeToPos);  // A shortcut way to move a servo from -90 to 90
 //}
+
+
+
+
+
+
+//  COMPANY PROVIDED CODES
+
+//  FOR STANDING UP AFTER A FALL
+
+//  #1P1500#2P2500#3P1500#8P1500#9P1500#10P1500#11P1500#12P1500#21P1500#22P1500#23P1500#24P1500#25P1500#30P1500#31P2500#32P1500T500
+//  #1P1500#2P2500#3P1500#8P1500#9P1500#10P1500#11P600#12P1500#21P1500#22P600#23P1500#24P1500#25P1500#30P1500#31P2500#32P1500T500
+//  #1P1500#2P2500#3P1500#8P1500#9P500#10P1500#11P900#12P1500#21P1500#22P900#23P1500#24P500#25P1500#30P1500#31P2500#32P1500T500
+//  #1P1500#2P2500#3P1500#8P1500#9P500#10P800#11P1500#12P1500#21P1500#22P1500#23P800#24P500#25P1500#30P1500#31P2500#32P1500T500
+//  #1P1500#2P2500#3P1500#8P1500#9P500#10P500#11P2300#12P1500#21P1500#22P2300#23P500#24P500#25P1500#30P1500#31P2500#32P1500T1000
+//  #1P1500#2P2500#3P1500#8P1500#9P800#10P500#11P2300#12P1500#21P1500#22P2300#23P500#24P800#25P1500#30P1500#31P2500#32P1500T500
+//  #1P1500#2P2500#3P1500#8P1500#9P800#10P800#11P2300#12P1500#21P1500#22P2300#23P800#24P800#25P1500#30P1500#31P2500#32P1500T500
+//  #1P1500#2P2500#3P1500#8P1500#9P1000#10P800#11P2300#12P1500#21P1500#22P2300#23P800#24P1000#25P1500#30P1500#31P2500#32P1500T500
+//  #1P1500#2P2500#3P1500#8P1500#9P1000#10P1000#11P2100#12P1500#21P1500#22P2100#23P1000#24P1000#25P1500#30P1500#31P2500#32P1500T500
+//  #1P1500#2P2500#3P1500#8P1500#9P1000#10P1200#11P1900#12P1500#21P1500#22P1900#23P1200#24P1000#25P1500#30P1500#31P2500#32P1500T500
+//  #1P1500#2P2500#3P1500#8P1500#9P1000#10P1500#11P1700#12P1500#21P1500#22P1700#23P1500#24P1000#25P1500#30P1500#31P2500#32P1500T500
+//  #1P1500#2P2500#3P1500#8P1500#9P1500#10P1500#11P1500#12P1500#21P1500#22P1500#23P1500#24P1500#25P1500#30P1500#31P2500#32P1500T500
+//  #1P1500#2P2500#3P1500#8P1500#9P1100#10P2000#11P1300#12P1500#21P1500#22P1300#23P2000#24P1100#25P1500#30P1500#31P2500#32P1500T500
+
+
+//  FOR PUSHUPS
+
+//  #1P1500#2P2500#3P1500#8P1500#9P1100#10P2500#11P900#12P1500#21P1500#22P900#23P2500#24P1100#25P1500#30P1500#31P2500#32P1500T500
+//  #1P1500#2P2500#3P1500#8P1500#9P1600#10P2500#11P500#12P1500#21P1500#22P500#23P2500#24P1600#25P1500#30P1500#31P2500#32P1500T500
+//  #1P700#2P2500#3P1500#8P1500#9P1100#10P2100#11P500#12P1500#21P1500#22P500#23P2100#24P1100#25P1500#30P1500#31P2500#32P2400T1000
+//  #1P700#2P2500#3P1500#8P1500#9P1500#10P1500#11P1500#12P1500#21P1500#22P1500#23P1500#24P1500#25P1500#30P1500#31P2500#32P2400T1000
+//  #1P700#2P2100#3P700#8P1500#9P1500#10P1500#11P1500#12P1500#21P1500#22P1500#23P1500#24P1500#25P1500#30P700#31P2100#32P2400T1000
+//  #1P700#2P2500#3P1500#8P1500#9P1500#10P1500#11P1500#12P1500#21P1500#22P1500#23P1500#24P1500#25P1500#30P1500#31P2500#32P2400T1000
+//  #1P700#2P2100#3P700#8P1500#9P1500#10P1500#11P1500#12P1500#21P1500#22P1500#23P1500#24P1500#25P1500#30P700#31P2100#32P2400T1000
+//  #1P700#2P2500#3P1500#8P1500#9P1500#10P1500#11P1500#12P1500#21P1500#22P1500#23P1500#24P1500#25P1500#30P1500#31P2500#32P2400T1000
+
+
+//  FOR TURNING LEFT
+
+//  #1P1500#2P2500#3P1500#8P1500#9P1100#10P2000#11P1300#12P1500#21P1500#22P1300#23P2000#24P1100#25P1500#30P1500#31P2500#32P1500T500
+//  #1P1700#2P2500#3P1500#8P1550#9P1100#10P2000#11P1300#12P1350#21P1650#22P1300#23P2000#24P1100#25P1550#30P1500#31P2500#32P1700T200
+//  #1P1900#2P2500#3P1500#8P1550#9P1100#10P2000#11P1300#12P1350#21P1850#22P1300#23P2000#24P1100#25P1550#30P1500#31P2500#32P1900T200
+//  #1P2100#2P2500#3P1500#8P1550#9P1100#10P2000#11P1300#12P1350#21P1850#22P1200#23P2000#24P1400#25P1550#30P1500#31P2500#32P2100T200
+//  #1P1900#2P2500#3P1500#8P1550#9P1100#10P2000#11P1300#12P1350#21P1650#22P1200#23P2000#24P1400#25P1550#30P1500#31P2500#32P1900T200
+//  #1P1700#2P2500#3P1500#8P1550#9P1100#10P2000#11P1300#12P1350#21P1650#22P1300#23P2000#24P1100#25P1550#30P1500#31P2500#32P1700T500
