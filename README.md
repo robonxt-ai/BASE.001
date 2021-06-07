@@ -8,7 +8,7 @@ BASE.001 Project Proposal:      https://bit.ly/base001_proposal
 
 BASE.001 Project Reflection:    https://bit.ly/base001_reflection
 
-The R2L-Labs project website: https://r2l-labs.blogspot.com
+The R2L-Labs Blog: https://r2l-labs.blogspot.com
 
 *Everything is a Work In Progress (WIP). Expect changes, lots of changes.*
 
