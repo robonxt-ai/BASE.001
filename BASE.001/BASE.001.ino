@@ -1,10 +1,10 @@
 /*
-    Main program for BASE.001
+    BASE.001
     ------
     A (start from small)™ program
     ------
     Designed for version: BASE.001.ino
-    Last modified: 2022.01.02
+    Last modified: SEE VERSION
     Programmer: robonxt
     ------
     2022.01.02: Reversioned to BASE.001. Due to changed servo positions, need to update servo control program
@@ -13,8 +13,7 @@
     Goals:
     code abides by C++ rules?
 */
-
-#define VERSION "2022.01.03 2:00AM" // Increase this every time we upload?
+#define VERSION "2022.01.05 8:50PM" // Version
 /*  ------------------------------------------------------------------------------------------------------  */
 // Default baudrates for each serial port (servo, serial, bluetooth) MUST BE INT
 #define SERVOC_BAUDRATE 115200      // SERVOC = Servo Controller
@@ -50,9 +49,14 @@ SoftwareSerial  SerialServo(PIN_SERVO_RX, PIN_SERVO_TX);
 createSafeStringReader(sfSerialReader, 50, " ,\r\n");
 createSafeStringReader(sfServoReader, 50, " ,\r\n");
 
+#include "BufferedOutput.h"
+createBufferedOutput(output, 66, DROP_UNTIL_EMPTY); // modes are DROP_UNTIL_EMPTY, DROP_IF_FULL or BLOCK_IF_FULL
+
+
 /*  ------------------------------------------------------------------------------------------------------  */
 // Include needed files (This should be just before the setup!)
 #include "xtra_classes.h"       // This includes the LineBuffer class
+#include "command_handlers.h"       // This includes the LineBuffer class
 #include "coroutines.h"         // This includes coroutines
 
 /*  ------------------------------------------------------------------------------------------------------  */

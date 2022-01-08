@@ -23,13 +23,14 @@ COROUTINE(serialRead)
     {
         if (sfSerialReader.read())
         {
+            sfSerialReader.toLowerCase();
             if (sfSerialReader == "start")
             {
                 //handleStartCmd();
             }
-            else if (sfSerialReader == "stop")
+            else if (sfSerialReader == "stop" || sfSerialReader == "kill")
             {
-                //handleStopCmd();
+                handleStopCmd();
             } // else ignore unrecognized command
             else    // If none of the ifs above were true
             {
