@@ -15,87 +15,121 @@ COROUTINE(heartbeat)
 }
 
 /*  ------------------------------------------------------------------------------------------------------
-    [2022.01.03] serialRead > Serial coroutine
+    [2022.01.03] serialRead > Coroutine for reading serial data, V2
     ------------------------------------------------------------------------------------------------------  */
 COROUTINE(serialRead)
 {
     COROUTINE_LOOP()
     {
-        if (sfSerialReader.read())
+        if (ssSerialReader.read())
         {
-            sfSerialReader.toLowerCase();
-            if (sfSerialReader == "start")
+            ssSerialReader.toLowerCase();
+            if (ssSerialReader == "ok")
             {
-                //handleStartCmd();
+                handleOkCmd();
             }
-            else if (sfSerialReader == "stop" || sfSerialReader == "kill")
+            //////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////// -------------------- STOP ALL SERVO -------------------- //////////////////////
+            else if (ssSerialReader == "stop" || ssSerialReader == "kill")
             {
-                handleStopCmd();
-            } // else ignore unrecognized command
+                handleKILLCmd();
+            }
+            else if (ssSerialReader == "restart")
+            {
+                handleRESTARTCmd();
+            }
+            //////////////////////////////////////////////////////////////////////////////////////////////////////
             else    // If none of the ifs above were true
             {
-                Serial << "Not Recognized: " << sfSerialReader;
+                ssSerialOutput << "Not Recognized: " << ssSerialReader << endl;
             }
-            Serial << endl;
-            COROUTINE_DELAY(1);
-        } // else no delimited command yet
-        COROUTINE_DELAY(1);
+            ssSerialOutput << endl;
+            COROUTINE_DELAY(5);
+        }
+        COROUTINE_DELAY(5);
     }
 }
 
 /*  ------------------------------------------------------------------------------------------------------
-    [2022.01.02] serialReadConroutine > Coroutine for reading serial data
+    [2022.01.08] servoSend > Coroutine for moving servos
     ------------------------------------------------------------------------------------------------------  */
-class serialReadConroutine: public Coroutine
+COROUTINE(servoSend)
 {
-    public:
-        int runCoroutine() override
+    COROUTINE_LOOP()
+    {
+        if (!rIsError)
         {
-            COROUTINE_LOOP()
-            {
-                COROUTINE_AWAIT(Serial.available() > 0);
-                char c = Serial.read();
-                if (c == '\n' || c == '\r')
+            // Do stuff here
+            /*
+                if (something queue has stuff)
                 {
-                    const char* receivedChars = lineBuffer.getLine();
-                    Serial << "Received: " << receivedChars << endl;
-                    if (strcmp(receivedChars, "ok") == 0)           // Sets robot status to ok
-                    {
-                        Serial << "---------- ROBOT STATUS FORCED OK ----------" << endl;
-                    }
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////
-                    // Stuff here
-
-
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////
-                    else if (strncmp(receivedChars, "send.", 5 ) == 0 )  // Direct control of servos (EXAMPLE: "send.#21P1500T200")
-                    {
-                        const char *sub_command = &receivedChars[5];
-                        SerialServo << sub_command << endl;
-                        Serial << SerialServo << endl;
-                    }
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////
-                    ////////////////////// -------------------- STOP ALL SERVO -------------------- //////////////////////
-                    else if ((strcmp(receivedChars, "STOP") == 0) || (strcmp(receivedChars, "stop") == 0) || (strcmp(receivedChars, "KILL") == 0) || (strcmp(receivedChars, "kill") == 0))  // KILL SWITCH
-                    {
-                        Serial << "---------- KILL SWITCH ACTIVATED ----------" << endl;
-                        SerialServo << "#STOP" << endl;
-                    }
-                    ////////////////////// -------------------- STOP ALL SERVO -------------------- //////////////////////
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////
-                    else    // If none of the ifs above were true
-                    {
-                        Serial << "Not Recognized" << endl;
-                    }
-                    Serial << "- done -" << endl;
-                    lineBuffer.clear();
+                    //we parse it and send to servos. Also let the brain know!
+                    ssServoOutput << "#11P1000T200" << endl;
+                    ssSerialOutput << "#11P1000T200" << endl;
+                    COROUTINE_DELAY(2000);
+                    ssServoOutput << "#11P1500T200" << endl;
+                    ssSerialOutput << "#11P1000T200" << endl;
+                    COROUTINE_DELAY(2000);
                 }
-                else
-                {
-                    lineBuffer.append(c);
-                }
-            }
+            */
+
         }
-    private:
-        LineBuffer lineBuffer;  // Creates the linebuffer object for processing the serial data
-};
+        // don't do stuff here
+        COROUTINE_DELAY(20);
+    }
+}
+
+
+
+
+///*  ------------------------------------------------------------------------------------------------------
+//    [2021.09.04] servoMove > Coroutine for moving servos
+//    ------------------------------------------------------------------------------------------------------  */
+//COROUTINE(servoMove)
+//{
+//    COROUTINE_LOOP()
+//    {
+//        // Code stuff down here
+//        if (rIsError == false)
+//        {
+//            if ((qS.isEmpty()) == false)
+//            {
+//                //bool is_there_duration = false;     // Since we didn't do anything yet
+//
+//                //char data[15];
+//                const int ser = qS.dequeue();
+//                const int pos = qP.dequeue();
+//                const int dur = qD.dequeue();
+//
+//                // Update servo pos data
+//                servosUpdatedPos[ser][SERVO_PRE_UPD_POS] = pos; // Update last pos of servo with new pos
+//
+//                // SEND DATA!
+//                char data[16];
+//                if (dur < SERVO_MIN_DURATION)
+//                {
+//                    sprintf (data, "#%dP%d", ser, pos);     // Don't change this to <<! we need to keep it as one string so we can safely pass it to the SSC32
+//
+//                    //Serial << data;
+//                    SerialServo.print(data);
+//                }
+//                else
+//                {
+//                    sprintf (data, "#%dP%dT%d", ser, pos, dur);     // Don't change this to <<! we need to keep it as one string so we can safely pass it to the SSC32
+//
+//                    Serial << data << endl;
+//                    SerialServo.println(data);
+//
+//                    Serial << "After command: qS=" << qS.itemCount() << " qP=" << qP.itemCount() << " qD=" << qD.itemCount() << endl;
+//                    COROUTINE_DELAY(dur + 5);
+//                }
+//
+//                //COROUTINE_DELAY(1);
+//            }   // End of sending data
+//
+//            //COROUTINE_DELAY(1);
+//        }   // End of error checking
+//
+//        COROUTINE_DELAY(1);
+//    }// End of coroutine
+//};
