@@ -65,7 +65,6 @@ createBufferedOutput(ssServoOutput, MAX_SERIAL_LENGTH, DROP_UNTIL_EMPTY); // mod
 
 /*  ------------------------------------------------------------------------------------------------------  */
 // Include needed files (This should be just before the setup!)
-//#include "xtra_classes.h"       // This includes the LineBuffer class
 #include "command_handlers.h"   // This includes all the commands handled by serialRead
 #include "coroutines.h"         // This includes coroutines
 
