@@ -11,16 +11,17 @@
     2022.01.03: Trying out SafeStringReader for reading serial data
     2022.01.07: More testing
     2022.01.10: Thanks to the creator of SafeStrings, I now understand how to make BufferedOutput work with EspSoftwareSerial
+    2022.01.19: Sending data to servo works now. Servo sends back data as well.
     ------
     Goals:
     code abides by C++ rules?
 */
-#define VERSION "2022.01.10 01:05AM" // Version
+#define VERSION "2022.01.19 12:59AM" // Version
 /*  ------------------------------------------------------------------------------------------------------  */
 // Default baudrates for each serial port (servo, serial, bluetooth) MUST BE INT
 #define SERVOC_BAUDRATE 115200      // SERVOC = Servo Controller
 #define SERIAL_BAUDRATE 115200      // SERIAL = Serial communication
-#define MAX_SERIAL_LENGTH 256       // Maximum length of serial commands
+#define MAX_SERIAL_LENGTH 512       // Maximum length of serial commands
 
 // Defines SoftwareSerial ports
 const byte PIN_SERVO_RX = D5;       // RX pin for the servo board
@@ -96,7 +97,7 @@ void setup() // Put your setup code here, to run once:
     if (isECHO)
     {
         ssSerialReader.echoOn();            // echo back all input, by default echo is off
-        //ssSerialReader.echoOn();          // echo back all input, by default echo is off
+        //ssServoReader.echoOn();          // echo back all input, by default echo is off
     }
     ssSerialOutput << "--------------------------------------------------" << endl;
     ssSerialOutput << "VERSION: " << VERSION << endl;
@@ -128,7 +129,8 @@ void loop()
     ssServoOutput.nextByteOut();    // Sends remaining data to SerialServo
     heartbeat.runCoroutine();       // Heartbeat
     serialRead.runCoroutine();      // Read serial
-    servoSend.runCoroutine();       // Send servo data
+    servoRead.runCoroutine();       // Read servo serial    
+    //servoSend.runCoroutine();       // Send servo data
     //
     // Code for normal program here
 

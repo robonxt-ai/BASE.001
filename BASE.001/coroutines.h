@@ -23,18 +23,28 @@ COROUTINE(serialRead)
     {
         if (ssSerialReader.read())
         {
-            ssSerialReader.toLowerCase();
-            if (ssSerialReader == "ok")
+            ssSerialReader.toUpperCase();
+            if (ssSerialReader == "HI")
+            {
+                //handleOkCmd();
+            }
+
+            //////////////////////////////////////////////////////////////////////////////////////////////////////
+            else if (ssSerialReader.startsWith('#'))
+            {
+                handleSendCmd(ssSerialReader);
+                //updateServoPosition(convertSSToPosition(ssSerialReader));
+            }
+            else if (ssSerialReader == "OK")
             {
                 handleOkCmd();
             }
-            //////////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////// -------------------- STOP ALL SERVO -------------------- //////////////////////
-            else if (ssSerialReader == "stop" || ssSerialReader == "kill")
+            else if (ssSerialReader == "STOP" || ssSerialReader == "KILL")
             {
                 handleKILLCmd();
             }
-            else if (ssSerialReader == "restart")
+            else if (ssSerialReader == "RESTART")
             {
                 handleRESTARTCmd();
             }
@@ -43,10 +53,26 @@ COROUTINE(serialRead)
             {
                 ssSerialOutput << "Not Recognized: " << ssSerialReader << endl;
             }
-            ssSerialOutput << endl;
+            //ssSerialOutput << endl;
             COROUTINE_DELAY(5);
         }
         COROUTINE_DELAY(5);
+    }
+}
+
+/*  ------------------------------------------------------------------------------------------------------
+    [2022.01.19] servoRead > Coroutine for reading servo serial data
+    ------------------------------------------------------------------------------------------------------  */
+COROUTINE(servoRead)
+{
+    COROUTINE_LOOP()
+    {
+        if (ssServoReader.read())
+        {
+            ssSerialOutput << "reply: " << ssServoReader << endl;
+            //COROUTINE_DELAY(10);
+        }
+        COROUTINE_DELAY(10);
     }
 }
 

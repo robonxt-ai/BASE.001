@@ -1,14 +1,19 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-void handleKILLCmd()
+void handleSendCmd(SafeString& strIn)
 {
-    ssSerialOutput << "---------- KILL SWITCH ACTIVATED ----------" << endl;
-    ssServoOutput << "#STOP" << endl;
-    rIsError = true;
+    ssSerialOutput << "sending " << ssSerialReader << " to board" << endl;
+    ssServoOutput << ssSerialReader << endl;
 }
 void handleOkCmd()
 {
     ssSerialOutput << "---------- ROBOT STATUS SET TO OK ----------" << endl;
     rIsError = false;
+}
+void handleKILLCmd()
+{
+    ssSerialOutput << "---------- KILL SWITCH ACTIVATED ----------" << endl;
+    ssServoOutput << "#STOP" << endl;
+    rIsError = true;
 }
 void handleRESTARTCmd()
 {
