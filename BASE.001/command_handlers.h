@@ -1,12 +1,36 @@
+// do we need a settings menu?
 //////////////////////////////////////////////////////////////////////////////////////////////////////
+void handleINFOCmd()
+{
+    ssSerialOutput << "--------------------------------------------------" << endl;
+    //ssSerialOutput << "----- DETAILS -----" << endl;
+    ssSerialOutput << "PROJECT: " << PROJECT << endl;
+    ssSerialOutput << "CREATOR: " << CREATOR << endl;
+    ssSerialOutput << "VERSION: " << VERSION << endl;
+    ssSerialOutput << "----- SETTINGS -----" << endl;
+    ssSerialOutput << "SERVOC_BAUDRATE: " << SERVOC_BAUDRATE << endl;
+    ssSerialOutput << "SERIAL_BAUDRATE: " << SERIAL_BAUDRATE << endl;
+    ssSerialOutput << "rIsError: " << rIsError << endl;
+    ssSerialOutput << "rIsStand: " << rIsStand << endl;
+    ssSerialOutput << "isECHO: " << isECHO << endl;
+    ssSerialOutput << "--------------------------------------------------" << endl;
+}
 void handleSendCmd(SafeString& strIn)
 {
-    ssSerialOutput << "sending " << ssSerialReader << " to board" << endl;
+    ssSerialOutput << "send: " << ssSerialReader << endl;
+    //qServoData.enqueue();
+    ssServoOutput << ssSerialReader << endl;
+}
+void handleFORCECmd(SafeString& strIn)
+{
+    ssSerialOutput << "force: " << ssSerialReader << endl;
+    
     ssServoOutput << ssSerialReader << endl;
 }
 void handleOkCmd()
 {
     ssSerialOutput << "---------- ROBOT STATUS SET TO OK ----------" << endl;
+    ssServoOutput << "#OK" << endl;
     rIsError = false;
 }
 void handleKILLCmd()
@@ -22,42 +46,3 @@ void handleRESTARTCmd()
     ESP.restart();
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-//void k()
-//{
-//
-//    // Stuff here
-//
-//    else if (strcmp(receivedChars, "box") == 0)           // Sets robot status to ok
-//    {
-//        //move_BOX();
-//    }
-//    else if (strcmp(receivedChars, "r") == 0)           // Sets robot status to ok
-//    {
-//        //rReset(5000);
-//    }
-//    else if (strcmp(receivedChars, "ready") == 0)           // Sets robot status to ok
-//    {
-//        //readyToWalk();
-//    }
-//    else if (strcmp(receivedChars, "w") == 0)           // Sets robot status to ok
-//    {
-//        //walkingV8(2, 1);
-//    }
-//    else if (strcmp(receivedChars, "w2") == 0)           // Sets robot status to ok
-//    {
-//        //walkingV9(2, 1);
-//    }
-//    else if (strcmp(receivedChars, "gS") == 0)           // Sets robot status to ok
-//    {
-//        //getupSUPINE();
-//    }
-//
-//    else if (strcmp(receivedChars, "selfright") == 0)           // Sets robot status to ok
-//    {
-//        //isSelfRight = !isSelfRight;
-//        //ssSerialOutput << "isSelfRight is now: " << isSelfRight << endl;
-//    }
-//}

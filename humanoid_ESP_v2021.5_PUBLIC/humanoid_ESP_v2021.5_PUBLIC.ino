@@ -3,21 +3,23 @@
     ------
     A (start from small)™ program
     ------
-    Designed for version: humanoid_ESP_v2021.5_PUBLIC.ino
-    Last modified: 2021.05.14
+    Designed for version: humanoid_ESP_v2022_PUBLIC.ino
+    Last modified: 2022.03.04
     Programmer: robonxt
+    ------
+    NOTES:
+    getup function may be have weird results. You have been warned. It is a semi-working concept.
+    misuse of it may cause the robot to destroy itself.
     ------
     Changelogs:
     2021.05.14: Initial commit of working(?) latest code. Disabled Blynk.
+    2022.03.04: Removed all Blynk features.
 
 */
 
 /*  ------------------------------------------------------------------------------------------------------  */
 // Is debugging messages enabled?
 bool DEBUG = false;
-
-// Blynk debugging
-//#define BLYNK_PRINT Serial
 
 // Default baudrates for each serial port (servo, serial, bluetooth) MUST BE INT
 #define SERVOC_BAUDRATE 115200 // SERVOC = Servo Controller
@@ -54,21 +56,11 @@ int previousDuration = 0;
 #include <TinyMPU6050.h>
 MPU6050 mpu(Wire);
 
-// For Blynk
-//#include <ESP8266WiFi.h>
-//#include <BlynkSimpleEsp8266.h>
-
 // For QList
 #include <QList.h>
 QList<int> qServo;
 QList<int> qPosition;
 QList<int> qDuration;
-
-// BlynkTimer timer;
-//WidgetLED hbLED(V0);
-//WidgetLED errLED(V127);
-//WidgetLED isBusyLED(V40);
-//WidgetLED isTipLED(V41);
 
 // For software serial ports
 #include <SoftwareSerial.h>
@@ -94,14 +86,9 @@ elapsedMillis servoDelay; // For non-blocking servo controller
 
 /*  ------------------------------------------------------------------------------------------------------  */
 // Include needed files (This should be just before the setup!)
-//#include "servo_controller.h"
 #include "servo_controller2.h"  // Testing!
-//#include "movements_v2021.1.h"
-#include "test.h"
 #include "MPU.h"
-//#include "Blynk.h"
 
-//#include "command_receiver.h" // Place this the last one in the list!
 #include "command_receiver2.h" // Place this the last one in the list!
 
 /*  ------------------------------------------------------------------------------------------------------
@@ -110,14 +97,6 @@ elapsedMillis servoDelay; // For non-blocking servo controller
 void isBusy(bool truth)
 {
     rIsBusy = truth;
-    if (truth)
-    {
-        //isBusyLED.on();
-    }
-    else
-    {
-        //isBusyLED.off();
-    }
 }
 
 /*  ------------------------------------------------------------------------------------------------------
@@ -131,14 +110,11 @@ void heartbeat()
         hbSTATE = 0;
         hbMillis = 0;
         //Debug.print(DBG_VERBOSE, F("heartbeat"));
-        //hbLED.off();
     }
     else if ((hbMillis >= hbIntervalOFF) && (hbSTATE == 0)) // Turns on LED
     {
         digitalWrite(LED_BUILTIN, LOW); // Remember that LOW turns on the Built in LED for ESP boards!
-        //sendBlynkData();
         hbSTATE = 1;
-        //hbLED.on();
     }
 }
 
@@ -171,9 +147,6 @@ void setup() // Put your setup code here, to run once:
     // Code for setups
     //////////////////////////////////////////////////////////////////////////////////////////////////////
     Serial.println("---------- Setup START ----------");
-    // Connect to Blynk
-    //setupBlynk();
-
     // Initiate servos
     sInit();
 
@@ -183,9 +156,7 @@ void setup() // Put your setup code here, to run once:
     setupMPU();
     Serial.println("---------- Setup DONE ----------");
     //rCurrActionState = "IDLE";
-    //delay(100);
     isBusy(false);
-    //delay(100);
 }
 
 
@@ -199,7 +170,6 @@ void gyroUpdate()
         //Debug.print(DBG_VERBOSE, F("gyro print"));
         //gSTATE = 2;
         mpu.Execute();
-        //sendGyroData();
         //MPU_print();
         gpMillis = 0;
     }
@@ -216,26 +186,29 @@ void humanoidStateCheck()
 {
     if (getupMillis >= getupDelay) // If it's time to check if robot has tipped over
     {
-        Serial.println("checking if robot has tipped over");
-        if (rIsBusy == false && abs(mpu.GetAngY()) >= rThresholdToRight)
+        if (rIsBusy == false)
         {
-            //rCurrActionState = "RIGHTING";
-            isBusy(true);
-            //errLED.on();
-            //isTipLED.on();
-            if (mpu.GetAngY() >= rThresholdToRight) // If it's tipped backward
+            Serial.println("checking if robot has tipped over");
+            if (abs(mpu.GetAngY()) >= rThresholdToRight)
             {
-                getup(1);
+                //rCurrActionState = "RIGHTING";
+                isBusy(true);
+                if (mpu.GetAngY() >= rThresholdToRight) // If it's tipped backward
+                {
+                    getup(-1);
+                }
+                else if (mpu.GetAngY() <= -rThresholdToRight) // If it's tipped forward
+                {
+                    getup(1);
+                }
             }
-            else if (mpu.GetAngY() <= -rThresholdToRight) // If it's tipped forward
-            {
-                getup(-1);
-            }
-            //errLED.off();
-            //isTipLED.off();
-        }
+            getupMillis = 0;
 
-        getupMillis = 0;
+        }
+        else
+        {
+            
+        }
     }
 }
 
@@ -246,9 +219,6 @@ void loop()
 {
     gyroUpdate(); // Gyro
     heartbeat();  // Heartbeat
-    //statusUpdate();
-    //ArduinoOTA.handle();    // Handles OTA updates
-
     //
     // Code for normal program
 

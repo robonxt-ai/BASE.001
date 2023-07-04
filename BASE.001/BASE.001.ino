@@ -12,11 +12,21 @@
     2022.01.07: More testing
     2022.01.10: Thanks to the creator of SafeStrings, I now understand how to make BufferedOutput work with EspSoftwareSerial
     2022.01.19: Sending data to servo works now. Servo sends back data as well.
+    2022.01.22: Thinking about using LittleFS to save config files, but not implementing that until I finish other things.
+    2022.01.24: Trying to get some processing done. QList does not work on ESP boards, switching over to ArduinoQueue.
+    2022.01.25: process:    when sending data (string) from serial: hold it in buffer until ends with Time; process string to store servo positions.
+                            when sending data (int) from brain: convert to string; hold in buffer until ends with Time; process string to store servo positions.
+                            so we need: int > string (easy); string > int (hard); string > buffer (???)
+    2022.01.30: working on int > string (easy);
     ------
     Goals:
     code abides by C++ rules?
 */
-#define VERSION "2022.01.19 12:59AM" // Version
+#define PROJECT "BASE.001"          // PROJECT
+#define CREATOR "robonxt"           // CREATOR
+#define VERSION "2022.01.25 1:57AM" // VERSION
+#define TESTING true                // TESTING
+
 /*  ------------------------------------------------------------------------------------------------------  */
 // Default baudrates for each serial port (servo, serial, bluetooth) MUST BE INT
 #define SERVOC_BAUDRATE 115200      // SERVOC = Servo Controller
@@ -38,8 +48,13 @@ bool rIsError = false;              // is Error?
 bool rIsStand = false;              // is standing?
 
 // For startup settings
+bool isDebug = true;                // Echo commands through serial?
 bool isECHO = true;                 // Echo commands through serial?
 /*  ------------------------------------------------------------------------------------------------------  */
+// For LittleFS
+//#include <FS.h>   // future use
+//#include <LittleFS.h>  // future use
+
 // For AceRoutine (coroutines)
 #include <AceRoutine.h>
 using namespace ace_routine;
@@ -53,26 +68,31 @@ SoftwareSerial SerialServo(PIN_SERVO_RX, PIN_SERVO_TX);
 
 // For SafeString
 #include "SafeStringReader.h"
-
-//createSafeString(serialData, MAX_SERIAL_LENGTH);
-//createSafeString(servoData, MAX_SERIAL_LENGTH);
+#include "BufferedOutput.h"
 createSafeStringReader(ssSerialReader, MAX_SERIAL_LENGTH, " ,\r\n");
 createSafeStringReader(ssServoReader, MAX_SERIAL_LENGTH, " ,\r\n");
-
-#include "BufferedOutput.h"
 createBufferedOutput(ssSerialOutput, MAX_SERIAL_LENGTH, DROP_UNTIL_EMPTY); // modes are DROP_UNTIL_EMPTY, DROP_IF_FULL or BLOCK_IF_FULL
 createBufferedOutput(ssServoOutput, MAX_SERIAL_LENGTH, DROP_UNTIL_EMPTY); // modes are DROP_UNTIL_EMPTY, DROP_IF_FULL or BLOCK_IF_FULL
 
+// For ArduinoQueue (since QList doesn't work on ESP boards)
+#include <ArduinoQueue.h>
+const int MAX_ITEMS_IN_QUEUE = 512;
+ArduinoQueue<char*> qServoData(MAX_ITEMS_IN_QUEUE);
+
+// For QList (QList doesn't work on ESP boards)
+//#include <QList.h>
+//QList<String> qServoData;
 
 /*  ------------------------------------------------------------------------------------------------------  */
 // Include needed files (This should be just before the setup!)
+#include "servo_data.h"         // This includes all servo data
 #include "command_handlers.h"   // This includes all the commands handled by serialRead
 #include "coroutines.h"         // This includes coroutines
+#include "testing_strings.h"    // TESTING
+
 
 /*  ------------------------------------------------------------------------------------------------------  */
 // Objects
-
-
 /*  ------------------------------------------------------------------------------------------------------  */
 
 /*  ------------------------------------------------------------------------------------------------------
@@ -93,15 +113,12 @@ void setup() // Put your setup code here, to run once:
     ssServoReader.connect(SerialServo);    // where ssServoReader will read from
 
     ssSerialOutput.connect(Serial, SERIAL_BAUDRATE);        // where ssSerialOutput will send
-    ssServoOutput.connect(SerialServo, SERVOC_BAUDRATE);    // where ssServoOutput will send. Need baud rate here because EspSoftwareSerial's availableForWrite() not reliable`
+    ssServoOutput.connect(SerialServo, SERVOC_BAUDRATE);    // where ssServoOutput will send
     if (isECHO)
     {
         ssSerialReader.echoOn();            // echo back all input, by default echo is off
-        //ssServoReader.echoOn();          // echo back all input, by default echo is off
     }
-    ssSerialOutput << "--------------------------------------------------" << endl;
-    ssSerialOutput << "VERSION: " << VERSION << endl;
-    ssServoOutput << F("#1P1500T100") << endl << F("OK") << endl;      // Warm up the head servo sends a OK to servo board
+    handleINFOCmd();    // Sends info to serial
     //////////////////////////////////////////////////////////////////////////////////////////////////////
     // End Serial setup
     //
@@ -109,7 +126,20 @@ void setup() // Put your setup code here, to run once:
     //////////////////////////////////////////////////////////////////////////////////////////////////////
     ssSerialOutput << "---------- Setup START ----------" << endl;
 
+    qServoData.enqueue("#2P2500");
+    qServoData.enqueue("#4P1500T1000");
+    qServoData.enqueue("#2P500T7000");
+    qServoData.enqueue("#4P500");
 
+    qServoData.enqueue("#2P1500T5000");
+    qServoData.enqueue("#4P2500T1000");
+
+    qServoData.enqueue("#2P500T500");
+    qServoData.enqueue("#4P500T100");
+    qServoData.enqueue("#2P2500T500");
+
+
+    //test();
     ssSerialOutput << "---------- Setup END ----------" << endl;
     //////////////////////////////////////////////////////////////////////////////////////////////////////
     // End program setup
@@ -128,12 +158,15 @@ void loop()
     ssSerialOutput.nextByteOut();   // Sends remaining data to Serial
     ssServoOutput.nextByteOut();    // Sends remaining data to SerialServo
     heartbeat.runCoroutine();       // Heartbeat
-    serialRead.runCoroutine();      // Read serial
-    servoRead.runCoroutine();       // Read servo serial    
+    //serialRead.runCoroutine();      // Read serial
+    servoRead.runCoroutine();       // Read servo serial
     //servoSend.runCoroutine();       // Send servo data
     //
     // Code for normal program here
-
+//    if (qServoData.itemCount() > 0)
+//    {
+//        test();
+//    }
     //
     // Code for more background services here
     // hi

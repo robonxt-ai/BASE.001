@@ -278,18 +278,6 @@ int sSendData(int servo, int pos, int duration)
     return sDelay(duration);     // Returns 0 if all data sent, 1 if duration skipped
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 /*  ------------------------------------------------------------------------------------------------------
     [01/25/2021] sCheckIfError > Checks if position is in range of servo
     ------------------------------------------------------------------------------------------------------  */
@@ -307,8 +295,6 @@ int sCheckIfError(int servo, int checkedAbsPos)
     return (ok);    // Returns ok value to the previous function
 }
 
-
-
 /*  ------------------------------------------------------------------------------------------------------
     [2021.04.26] sMove > Moves servo to pos in ms (Like sSubmitPos but with error checking)
     ------------------------------------------------------------------------------------------------------  */
@@ -317,7 +303,7 @@ void sMove(int servo, int pos, int duration)
     int ok = -1;    // Used for debugging
     if (sCheckIfError(servo, pos) == 0)   // If value is within acceptable range
     {
-        
+
         // Sends move data to servo
         qServo.push_back(servo);    // Send it to Queue!
         qPosition.push_back(pos);    // Send it to Queue!
@@ -382,7 +368,7 @@ void servoReceiver()
             sUpdatePos(ser, pos);    // Get result from sUpdatePos
 
             //delay(10);
-    
+
             qServo.clear(0);
             qPosition.clear(0);
             qDuration.clear(0);
@@ -411,7 +397,6 @@ void sReset(int servo, int duration)
 {
     sMove(servo, sGetDefaultPos(servo), duration);
     //Debug.print(DBG_DEBUG, F("sReset - returns: %d"), ok);
-    //return (ok);    // Returns ok value to the previous function
 }
 
 /*  ------------------------------------------------------------------------------------------------------
@@ -434,4 +419,137 @@ void sInit()
         //delay(1);  // Delay to prevent crashes?
     }
     Debug.print(DBG_INFO, F("sInit: %s"), "DONE");
+}
+
+
+void standup()
+{
+    // PHASE 1
+    // straighten roll in legs
+    sMoveDEG(R_HIP_ROLL,  90, 0);
+    sMoveDEG(R_ANKLE_ROLL,  90, 0);
+    sMoveDEG(L_HIP_ROLL,  90, 0);
+    sMoveDEG(L_ANKLE_ROLL,  90, 0);
+
+    // straighten ankles ser.#22P1500#11P1500T1000
+    sMoveDEG(R_ANKLE_PITCH,  90, 0);
+    sMoveDEG(L_ANKLE_PITCH,  90, 0);
+
+    // straighten knee ser.#23P1500#10P1500T1000
+    sMoveDEG(R_KNEE_PITCH,  90, 0);
+    sMoveDEG(L_KNEE_PITCH,  90, 0);
+
+    // straighten hip ser.#24P1500#9P1500T1000
+    sMoveDEG(R_HIP_PITCH,  90, 0);
+    sMoveDEG(L_HIP_PITCH,  90, 0);
+
+    // straighten right arm ser.#29P1500#30P1500#31P1500T1000
+    sMoveDEG(R_ARM_ROLL,  90, 0);
+    sMoveDEG(R_SHOULD_ROLL,  0, 0);
+    sMoveDEG(R_SHOULD_PITCH,  90, 0);
+
+    // straighten left arm ser.#2P1500#3P1500#4P1500T1000
+    sMoveDEG(L_ARM_ROLL,  90, 0);
+    sMoveDEG(L_SHOULD_ROLL,  180, 0);
+    sMoveDEG(L_SHOULD_PITCH,  90, 2000);
+}
+
+void getup(int side)
+{
+    // PHASE 1
+    // straighten roll in legs
+    sMoveDEG(R_HIP_ROLL, (side * 0)  + 90, 0);
+    sMoveDEG(R_ANKLE_ROLL, (side * 0)  + 90, 0);
+    sMoveDEG(L_HIP_ROLL, (-side * 0)  + 90, 0);
+    sMoveDEG(L_ANKLE_ROLL, (-side * 0)  + 90, 0);
+
+    // straighten ankles ser.#22P1500#11P1500T1000
+    sMoveDEG(R_ANKLE_PITCH, (side * 0)  + 90, 0);
+    sMoveDEG(L_ANKLE_PITCH, (-side * 0)  + 90, 0);
+
+    // straighten knee ser.#23P1500#10P1500T1000
+    sMoveDEG(R_KNEE_PITCH, (side * 0)  + 90, 0);
+    sMoveDEG(L_KNEE_PITCH, (-side * 0)  + 90, 0);
+
+    // straighten hip ser.#24P1500#9P1500T1000
+    sMoveDEG(R_HIP_PITCH, (side * 0)  + 90, 0);
+    sMoveDEG(L_HIP_PITCH, (-side * 0)  + 90, 0);
+
+    // straighten right arm ser.#29P1500#30P1500#31P1500T1000
+    sMoveDEG(R_ARM_ROLL, (side * 0)  + 90, 0);
+    sMoveDEG(R_SHOULD_ROLL, (side * 0)  + 90, 0);
+    sMoveDEG(R_SHOULD_PITCH, (side * 0)  + 90, 0);
+
+    // straighten left arm ser.#2P1500#3P1500#4P1500T1000
+    sMoveDEG(L_ARM_ROLL, (-side * 0)  + 90, 0);
+    sMoveDEG(L_SHOULD_ROLL, (-side * 0)  + 90, 0);
+    sMoveDEG(L_SHOULD_PITCH, (-side * 0)  + 90, 3000);
+
+
+    // PHASE 2
+
+
+    // straighten right arm ser.#29P1500#30P1500#31P1500T1000
+    sMoveDEG(R_ARM_ROLL, (-90)  + 90, 0);
+    sMoveDEG(R_SHOULD_ROLL, (-60) + 90, 0);
+    sMoveDEG(R_SHOULD_PITCH, (side * -90)  + 90, 0);
+
+    // straighten left arm ser.#2P1500#3P1500#4P1500T1000
+    sMoveDEG(L_ARM_ROLL, (90)  + 90, 0);
+    sMoveDEG(L_SHOULD_ROLL, (60) + 90, 0);
+    sMoveDEG(L_SHOULD_PITCH, (-side * -90)  + 90, 2000);
+
+
+    // straighten ankles ser.#22P1500#11P1500T1000
+    sMoveDEG(R_ANKLE_PITCH, (side * -45)  + 90, 0);
+    sMoveDEG(L_ANKLE_PITCH, (-side * -45)  + 90, 0);
+
+    // straighten knee ser.#23P1500#10P1500T1000
+    sMoveDEG(R_KNEE_PITCH, (side * -90)  + 90, 0);
+    sMoveDEG(L_KNEE_PITCH, (-side * -90)  + 90, 0);
+
+    // straighten hip ser.#24P1500#9P1500T1000
+    sMoveDEG(R_HIP_PITCH, (side * -90)  + 90, 0);
+    sMoveDEG(L_HIP_PITCH, (-side * -90)  + 90, 1000);
+
+
+
+    // PHASE 3
+    // straighten ankles ser.#22P1500#11P1500T1000
+    sMoveDEG(R_ANKLE_PITCH, (side * 90)  + 90, 0);
+    sMoveDEG(L_ANKLE_PITCH, (-side * 90)  + 90, 0);
+
+    // straighten knee ser.#23P1500#10P1500T1000
+    sMoveDEG(R_KNEE_PITCH, (side * -90)  + 90, 0);
+    sMoveDEG(L_KNEE_PITCH, (-side * -90)  + 90, 0);
+
+    // straighten hip ser.#24P1500#9P1500T1000
+    sMoveDEG(R_HIP_PITCH, (side * 90)  + 90, 0);
+    sMoveDEG(L_HIP_PITCH, (-side * 90)  + 90, 0);
+
+    // straighten right arm ser.#29P1500#30P1500#31P1500T1000
+    sMoveDEG(R_ARM_ROLL, (side * 0)  + 90, 0);
+    sMoveDEG(R_SHOULD_ROLL, (-90)  + 90, 0);
+    sMoveDEG(R_SHOULD_PITCH, (side * -90)  + 90, 0);
+
+    // straighten left arm ser.#2P1500#3P1500#4P1500T1000
+    sMoveDEG(L_ARM_ROLL, (-side * 0)  + 90, 0);
+    sMoveDEG(L_SHOULD_ROLL, (90) + 90, 0);
+    sMoveDEG(L_SHOULD_PITCH, (-side * -90)  + 90, 2000);
+
+
+    // PHASE 4
+    // straighten ankles ser.#22P1500#11P1500T1000
+    sMoveDEG(R_ANKLE_PITCH, (side * 55)  + 90, 0);
+    sMoveDEG(L_ANKLE_PITCH, (-side * 55)  + 90, 0);
+
+    // straighten knee ser.#23P1500#10P1500T1000
+    sMoveDEG(R_KNEE_PITCH, (side * -55)  + 90, 0);
+    sMoveDEG(L_KNEE_PITCH, (-side * -55)  + 90, 0);
+
+    // straighten hip ser.#24P1500#9P1500T1000
+    sMoveDEG(R_HIP_PITCH, (side * 5)  + 90, 0);
+    sMoveDEG(L_HIP_PITCH, (-side * 5)  + 90, 2000);
+
+    standup();
 }

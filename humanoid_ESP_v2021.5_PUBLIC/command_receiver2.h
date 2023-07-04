@@ -69,10 +69,10 @@ void serialControl()
             // Lower body
             sMoveDEG(R_ANKLE_PITCH, 180, 0);
             sMoveDEG(L_ANKLE_PITCH, 0, 0);
-            sMoveDEG(R_KNEE_PITCH, 0, 0);
-            sMoveDEG(L_KNEE_PITCH, 180, 0);
-            sMoveDEG(R_HIP_PITCH, 180, 0);
-            sMoveDEG(L_HIP_PITCH, 0, 0);
+            sMoveDEG(R_KNEE_PITCH, 180, 0);
+            sMoveDEG(L_KNEE_PITCH, 0, 0);
+            sMoveDEG(R_HIP_PITCH, 0, 0);
+            sMoveDEG(L_HIP_PITCH, 180, 0);
             sMoveDEG(R_HIP_ROLL, 90, 0);
             sMoveDEG(L_HIP_ROLL, 90, 0);
             sMoveDEG(R_ANKLE_ROLL, 90, 0);
